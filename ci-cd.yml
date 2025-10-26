@@ -1,0 +1,21 @@
+# ci-cd.yml
+project:
+  name: MyDotNetApp
+  solutionFile: MyDotNetApp.sln
+  publishFolder: publish
+  zipName: MyDotNetApp
+
+sonarqube:
+  serverUrl: http://sonarqube:9000
+  credentialsId: sonarqube-token
+  projectKey: MyDotNetApp
+  projectName: MyDotNetApp
+  projectVersion: 1.0.0
+
+git:
+  branch: main
+  credentialsId: git-github
+
+build:
+  configuration: Release
+  framework: net9.0
