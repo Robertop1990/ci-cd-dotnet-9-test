@@ -55,25 +55,25 @@ pipeline {
                 withCredentials([string(credentialsId: env.SONAR_CREDS, variable: 'SONAR_TOKEN')]) {
                     script {
                         sh """
-                            # Restaurar herramientas locales del proyecto
-                            dotnet tool restore
+                            # Agregar herramientas globales al PATH
+                            export PATH=\$PATH:/home/jenkins/.dotnet/tools
 
-                            # Debug token length
+                            # Verificar token (no se imprime)
                             echo "SONAR_TOKEN length: \$(echo \$SONAR_TOKEN | wc -c)"
 
-                            # Ejecutar SonarScanner
-                            dotnet tool run dotnet-sonarscanner begin \
+                            # Ejecutar SonarScanner usando la instalación global
+                            dotnet-sonarscanner begin \
                                 /k:"${env.SONAR_PROJECT_KEY}" \
                                 /n:"${env.SONAR_PROJECT_NAME}" \
                                 /v:"${env.SONAR_PROJECT_VERSION}" \
                                 /d:sonar.login=\$SONAR_TOKEN \
                                 /d:sonar.host.url=${env.SONAR_URL}
 
-                            # Build del proyecto
+                            # Compilar la solución
                             dotnet build ${env.SOLUTION_FILE} -c ${env.BUILD_CONFIG} -f ${env.FRAMEWORK}
 
                             # Finalizar SonarScanner
-                            dotnet tool run dotnet-sonarscanner end /d:sonar.login=\$SONAR_TOKEN
+                            dotnet-sonarscanner end /d:sonar.login=\$SONAR_TOKEN
                         """
                     }
                 }
