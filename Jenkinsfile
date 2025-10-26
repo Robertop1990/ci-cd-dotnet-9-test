@@ -55,14 +55,11 @@ pipeline {
                 withCredentials([string(credentialsId: env.SONAR_CREDS, variable: 'SONAR_TOKEN')]) {
                     script {
                         sh """
-                            # Agregar herramientas globales al PATH
-                            export PATH=\$PATH:/home/jenkins/.dotnet/tools
-
                             # Debug token length
                             echo "SONAR_TOKEN length: \$(echo \$SONAR_TOKEN | wc -c)"
 
-                            # Ejecutar SonarScanner global
-                            dotnet-sonarscanner begin \
+                            # Ejecutar SonarScanner usando ruta absoluta
+                            /home/jenkins/.dotnet/tools/dotnet-sonarscanner begin \
                                 /k:"${env.SONAR_PROJECT_KEY}" \
                                 /n:"${env.SONAR_PROJECT_NAME}" \
                                 /v:"${env.SONAR_PROJECT_VERSION}" \
@@ -71,7 +68,7 @@ pipeline {
 
                             dotnet build ${env.SOLUTION_FILE} -c ${env.BUILD_CONFIG} -f ${env.FRAMEWORK}
 
-                            dotnet-sonarscanner end /d:sonar.login=\$SONAR_TOKEN
+                            /home/jenkins/.dotnet/tools/dotnet-sonarscanner end /d:sonar.login=\$SONAR_TOKEN
                         """
                     }
                 }
