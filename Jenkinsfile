@@ -65,9 +65,12 @@ pipeline {
                                 /v:"${env.SONAR_PROJECT_VERSION}" \
                                 /d:sonar.login=$SONAR_TOKEN \
                                 /d:sonar.host.url=${env.SONAR_URL}
+
+                            dotnet build ${env.SOLUTION_FILE} -c ${env.BUILD_CONFIG} -f ${env.FRAMEWORK}"
+
+                            /home/jenkins/.dotnet/tools/dotnet-sonarscanner end /d:sonar.login=$SONAR_TOKEN
+
                         """
-                        sh "dotnet build ${env.SOLUTION_FILE} -c ${env.BUILD_CONFIG} -f ${env.FRAMEWORK}"
-                        sh "dotnet sonarscanner end /d:sonar.login=$SONAR_TOKEN"
                     }
                 }
             }
