@@ -1,8 +1,8 @@
 pipeline {
-    agent { label 'dotnet' } // El agente que creamos en Docker
+    agent { label 'dotnet' }
 
     environment {
-        CI_CONFIG = 'ci-cd.yml' // Ruta del archivo YAML en el repo
+        CI_CONFIG = 'ci-cd.yml'
     }
 
     stages {
@@ -33,19 +33,42 @@ pipeline {
             }
         }
 
+        stage('Debug Environment') {
+            steps {
+                script {
+                    echo "===== Debug Variables ====="
+                    echo "CI_CONFIG = ${env.CI_CONFIG}"
+                    echo "PROJECT_NAME = ${env.PROJECT_NAME}"
+                    echo "SOLUTION_FILE = ${env.SOLUTION_FILE}"
+                    echo "PUBLISH_FOLDER = ${env.PUBLISH_FOLDER}"
+                    echo "ZIP_NAME = ${env.ZIP_NAME}"
+                    echo "BUILD_CONFIG = ${env.BUILD_CONFIG}"
+                    echo "FRAMEWORK = ${env.FRAMEWORK}"
+                    echo "SONAR_URL = ${env.SONAR_URL}"
+                    echo "SONAR_CREDS = ${env.SONAR_CREDS}"
+                }
+            }
+        }
+
         stage('SonarQube Analysis') {
             steps {
                 withCredentials([string(credentialsId: env.SONAR_CREDS, variable: 'SONAR_TOKEN')]) {
-                    sh """
-                        dotnet sonarscanner begin \
-                        /k:"${env.SONAR_PROJECT_KEY}" \
-                        /n:"${env.SONAR_PROJECT_NAME}" \
-                        /v:"${env.SONAR_PROJECT_VERSION}" \
-                        /d:sonar.login=$SONAR_TOKEN \
-                        /d:sonar.host.url=${env.SONAR_URL}
-                    """
-                    sh "dotnet build ${env.SOLUTION_FILE} -c ${env.BUILD_CONFIG} -f ${env.FRAMEWORK}"
-                    sh "dotnet sonarscanner end /d:sonar.login=$SONAR_TOKEN"
+                    script {
+                        // Verificar token sin imprimirlo
+                        sh 'echo "SONAR_TOKEN length: $(echo $SONAR_TOKEN | wc -c)"'
+
+                        // Ejecutar SonarScanner
+                        sh """
+                            dotnet sonarscanner begin \
+                                /k:"${env.SONAR_PROJECT_KEY}" \
+                                /n:"${env.SONAR_PROJECT_NAME}" \
+                                /v:"${env.SONAR_PROJECT_VERSION}" \
+                                /d:sonar.login=$SONAR_TOKEN \
+                                /d:sonar.host.url=${env.SONAR_URL}
+                        """
+                        sh "dotnet build ${env.SOLUTION_FILE} -c ${env.BUILD_CONFIG} -f ${env.FRAMEWORK}"
+                        sh "dotnet sonarscanner end /d:sonar.login=$SONAR_TOKEN"
+                    }
                 }
             }
         }
