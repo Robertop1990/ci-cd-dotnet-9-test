@@ -61,8 +61,8 @@ pipeline {
                             # Debug token length
                             echo "SONAR_TOKEN length: \$(echo \$SONAR_TOKEN | wc -c)"
 
-                            # Ejecutar SonarScanner usando dotnet tool
-                            dotnet tool run dotnet-sonarscanner begin \
+                            # Ejecutar SonarScanner global
+                            dotnet-sonarscanner begin \
                                 /k:"${env.SONAR_PROJECT_KEY}" \
                                 /n:"${env.SONAR_PROJECT_NAME}" \
                                 /v:"${env.SONAR_PROJECT_VERSION}" \
@@ -71,7 +71,7 @@ pipeline {
 
                             dotnet build ${env.SOLUTION_FILE} -c ${env.BUILD_CONFIG} -f ${env.FRAMEWORK}
 
-                            dotnet tool run dotnet-sonarscanner end /d:sonar.login=\$SONAR_TOKEN
+                            dotnet-sonarscanner end /d:sonar.login=\$SONAR_TOKEN
                         """
                     }
                 }
