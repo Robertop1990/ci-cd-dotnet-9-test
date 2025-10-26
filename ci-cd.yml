@@ -1,6 +1,6 @@
 # ci-cd.yml
 project:
-  name: MyDotNetApp
+  name: ci-cd-dotnet-9-test
   solutionFile: MyDotNetApp.sln
   publishFolder: publish
   zipName: MyDotNetApp

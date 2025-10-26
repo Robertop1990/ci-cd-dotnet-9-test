@@ -10,7 +10,7 @@ pipeline {
             steps {
                 git branch: readYaml(file: env.CI_CONFIG).git.branch,
                     credentialsId: readYaml(file: env.CI_CONFIG).git.credentialsId,
-                    url: "https://github.com/TU_USUARIO/${readYaml(file: env.CI_CONFIG).project.name}.git"
+                    url: "https://github.com/Robertop1990/${readYaml(file: env.CI_CONFIG).project.name}.git"
             }
         }
 
